@@ -1,0 +1,68 @@
+<html>
+    <head>
+        <title>Task 3</title>
+    </head>
+    <body>
+        <p>vartex 0</p>
+        <label for="v0_x">x: </label>
+        <input type="number" id="v0_x" value="0"/>
+        <label for="v0_y">y: </label>
+        <input type="number" id="v0_y" value="0"/>
+        <label for="v0_z">z: </label>
+        <input type="number" id="v0_z" value="0"/>
+
+        <p>vartex 1</p>
+        <label for="v1_x">x: </label>
+        <input type="number" id="v1_x" value="0"/>
+        <label for="v1_y">y: </label>
+        <input type="number" id="v1_y" value="0"/>
+        <label for="v1_z">z: </label>
+        <input type="number" id="v1_z" value="0"/>
+
+        <p>vartex 2</p>
+        <label for="v2_x">x: </label>
+        <input type="number" id="v2_x" value="0"/>
+        <label for="v2_y">y: </label>
+        <input type="number" id="v2_y" value="0"/>
+        <label for="v2_z">z: </label>
+        <input type="number" id="v2_z" value="0"/>
+
+        <p><button id="button">Caluculate Area</button></p>
+        <label for="area">Area: </label>
+        <input type="number" id="area" value="0"/>
+
+        <script src="vec3.js"></script>
+        <script>
+            var button = document.getElementById( "button" );
+            var area = document.getElementById( "area" );
+
+            var x0 = document.getElementById( "v0_x" );
+            var y0 = document.getElementById( "v0_y" );
+            var z0 = document.getElementById( "v0_z" );
+
+            var x1 = document.getElementById( "v1_x" );
+            var y1 = document.getElementById( "v1_y" );
+            var z1 = document.getElementById( "v1_z" );
+                
+            var x2 = document.getElementById( "v2_x" );
+            var y2 = document.getElementById( "v2_y" );
+            var z2 = document.getElementById( "v2_z" );
+
+            function AreaOfTriangle( v1, v2 )
+            {
+                var l1 = v1.x * v1.x + v1.y * v1.y + v1.z * v1.z;
+                var l2 = v2.x * v2.x + v2.y * v2.y + v2.z * v2.z;
+                var dot = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+                return Math.sqrt( l1 * l2 - Math.pow( dot, 2 ) ) * 0.5;
+            }
+
+            button.addEventListener( "click", function(e){
+                    var v1 = new Vec3( x1.value - x0.value, y1.value - y0.value, z1.value - z0.value );
+                    var v2 = new Vec3( x2.value - x0.value, y2.value - y0.value, z2.value - z0.value );
+
+                    area.value = AreaOfTriangle( v1, v2 );
+                }
+            )
+        </script>
+    </body>
+</html>
