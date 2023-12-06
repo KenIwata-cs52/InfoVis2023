@@ -1,12 +1,12 @@
-d3.csv( "../W04/population_prefecture.csv" )
+d3.csv( "https://KenIwata-cs52.github.io/InfoVis2023/Data/population_prefecture.csv" )
     .then( data => {
         data.forEach( d => { d.population = +d.population; });
 
         var config = {
             parent: '#drawing_region',
-            width: 256,
-            height: 128,
-            margin: { top:10, right:10, bottom:20, left:30 }
+            width: 1024,
+            height: 512,
+            margin: { top:10, right:50, bottom:20, left:70 }
         };
 
         const bar_chart = new BarChart( config, data );
@@ -56,17 +56,17 @@ class BarChart {
         self.yaxis = d3.axisLeft( self.yscale )
             .tickSizeOuter( 0 );
 
-        self.xaxis_group = chart.append( 'g' )
-            .attr( 'transform', `translate(0, ${inner_height})` )
+        self.xaxis_group = self.chart.append( 'g' )
+            .attr( 'transform', `translate(0, ${self.inner_height})` );
 
-        self.yaxis_group = self.chart.append('g')
+        self.yaxis_group = self.chart.append( 'g' );
     }
 
     update() {
         let self = this;
 
-        self.xscale.domain( [ 0, d3.max( self.data, d => d.population ) ] )
-        self.yscale.domain( self.data.map( d => d.prefecture ) )
+        self.xscale.domain( [ 0, d3.max( self.data, d => d.population ) ] );
+        self.yscale.domain( self.data.map( d => d.prefecture ) );
 
         self.render();
     }
