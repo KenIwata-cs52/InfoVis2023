@@ -1,6 +1,6 @@
-x,y,r,color
-20,20,10,black
-100,50,10,black
-70,80,10,black
-170,30,10,black
-150,70,10,black
+index,x,y,r,color
+0,20,20,10,black
+1,100,50,10,black
+2,70,80,10,black
+3,170,30,10,black
+4,150,70,10,black
