@@ -7,7 +7,7 @@ class LineChart {
             margin: config.margin || { top:10, right:10, bottom:10, left:10 },
             xlabel: config.xlabel || '',
             ylabel: config.ylabel || '',
-            cscale: config.cscale,
+            color: config.color || 'black',
             region: config.region || ""
         };
         this.data = data;
@@ -50,6 +50,29 @@ class LineChart {
         self.line = d3.line()
             .x( d => self.xscale( d.year ) )
             .y( d => self.yscale( d.population ) );
+        
+        const xlabel_space = 40;
+        self.svg.append( 'text' )
+            .style( 'font-size', '12px' )
+            .attr( 'x', self.config.width / 2 )
+            .attr( 'y', self.inner_height + self.config.margin.top + xlabel_space )
+            .text( self.config.xlabel );
+
+        const ylabel_space = 50;
+        self.svg.append( 'text' )
+            .style( 'font-size', '12px' )
+            .attr( 'x', 0 )
+            .attr( 'y', ylabel_space/2 )
+            .text( self.config.ylabel );
+
+        // let data = self.data.filter( d => d.region == self.config.region );
+        // if( data.length > 0 ){
+        //     self.svg.append( 'text' )
+        //         .style( 'font-size', '12px' )
+        //         .attr( 'x', self.inner_width + self.config.margin.left )
+        //         .attr( 'y', self.inner_height - data.slice(-1)[0].population )
+        //         .text( self.config.region );
+        // }
     }
 
     update() {
@@ -72,13 +95,37 @@ class LineChart {
                 .append( "circle" )
                 .attr( "cx", d => self.xscale( d.year ) )
                 .attr( "cy", d => self.yscale( d.population ) )
-                .attr( "r", 3 );
+                .attr( "r", 5 )
+                .attr( "fill", self.config.color )
+                .on( 'mouseover', (e,d) => {
+                    d3.select( '#tooltip' )
+                        .style( 'opacity', 1)
+                        .html( `<div class="tooltip-label">${d.year}</div>${d.population}` );
+                })
+                .on( 'mousemove', (e) => {
+                    const padding = 12;
+                    d3.select( '#tooltip' )
+                        .style( 'left', ( e.pageX + padding ) + 'px' )
+                        .style( 'top', ( e.pageY + padding ) + 'px' );
+                })
+                .on( 'mouseleave', () => {
+                    d3.select( '#tooltip' )
+                        .style( 'opacity', 0 );
+                });;
 
             self.svg.append( 'path' )
                 .attr( 'transform', `translate(${self.config.margin.left}, ${self.config.margin.top})` )
-                .attr( 'd', self.line( self.data ) )
-                .attr( 'stroke', 'black' )
+                .attr( 'd', self.line( data ) )
+                .attr( 'stroke', self.config.color )
+                .attr( 'stroke-width', 5 )
                 .attr( 'fill', 'none' );
+
+            self.svg.append( 'text' )
+                .style( 'font-size', '12px' )
+                .attr( 'x', self.inner_width + self.config.margin.left + 10 )
+                .attr( 'y', self.yscale( data.slice(-1)[0].population ) + 10 )
+                .attr( 'fill', self.config.color )
+                .text( self.config.region );
         }
 
         self.xaxis_group
@@ -86,5 +133,12 @@ class LineChart {
 
         self.yaxis_group
             .call( self.yaxis );
+    }
+
+    reload() {
+        let self = this;
+        self.svg = null;
+        self.init();
+        self.update();
     }
 }

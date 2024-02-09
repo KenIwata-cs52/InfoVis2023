@@ -10,7 +10,7 @@ class BarChart {
             cscale: config.cscale,
             year: config.year
         };
-        this.data = data.filter( d => d.year == this.config.year && d.region != "Japan" );
+        this.data = data;
         this.init();
     }
 
@@ -68,20 +68,18 @@ class BarChart {
         let self = this;
 
         self.xscale.domain( [ 0, d3.max( self.data, d => d.population ) ] );
-        self.yscale.domain( self.data.map( d => d.region ) );
+        self.yscale.domain( self.data.filter( d => d.year == 2022 ).map( d => d.region ) );
 
         self.render();
     }
 
     render() {
         let self = this;
-
-        console.log( self.data.length );
+        let data = self.data.filter( d => d.year == self.config.year );
 
         self.chart.selectAll( "rect" )
-            .data( self.data )
-            .enter()
-            .append( "rect" )
+            .data( data )
+            .join( "rect" )
             .attr( "x", 0 )
             .attr( "y", d => self.yscale( d.region ) )
             .attr( "width", d => self.xscale( d.population ) )
@@ -89,6 +87,22 @@ class BarChart {
             .attr( "fill", ( d, i ) => self.config.cscale( i ) )
             .on( 'click', function( e, d ){
                 console.log( d.region );
+                drawLine( e.target.getAttributeNS( null, "fill" ), d.region );
+            })
+            .on( 'mouseover', (e,d) => {
+                d3.select( '#tooltip' )
+                    .style( 'opacity', 1)
+                    .html( `<div class="tooltip-label">${d.region}</div>${d.population}` );
+            })
+            .on( 'mousemove', (e) => {
+                const padding = 10;
+                d3.select( '#tooltip' )
+                    .style( 'left', ( e.pageX + padding ) + 'px' )
+                    .style( 'top', ( e.pageY + padding ) + 'px' );
+            })
+            .on( 'mouseleave', () => {
+                d3.select( '#tooltip' )
+                    .style( 'opacity', 0 );
             });
 
         self.xaxis_group
