@@ -64,15 +64,6 @@ class LineChart {
             .attr( 'x', 0 )
             .attr( 'y', ylabel_space/2 )
             .text( self.config.ylabel );
-
-        // let data = self.data.filter( d => d.region == self.config.region );
-        // if( data.length > 0 ){
-        //     self.svg.append( 'text' )
-        //         .style( 'font-size', '12px' )
-        //         .attr( 'x', self.inner_width + self.config.margin.left )
-        //         .attr( 'y', self.inner_height - data.slice(-1)[0].population )
-        //         .text( self.config.region );
-        // }
     }
 
     update() {
