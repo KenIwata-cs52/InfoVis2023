@@ -7,9 +7,10 @@ class BarChart {
             margin: config.margin || { top:10, right:10, bottom:10, left:10 },
             xlabel: config.xlabel || '',
             ylabel: config.ylabel || '',
-            cscale: config.cscale
+            cscale: config.cscale,
+            year: config.year
         };
-        this.data = data;
+        this.data = data.filter( d => d.year == this.year );
         this.init();
     }
 
@@ -35,7 +36,6 @@ class BarChart {
             .range( [ self.inner_height, 0 ] );
 
         self.xaxis = d3.axisBottom( self.xscale )
-            .ticks( self.data.region )
             .tickSizeOuter( 0 );
 
         self.yaxis = d3.axisLeft( self.yscale )
@@ -77,14 +77,16 @@ class BarChart {
     render() {
         let self = this;
 
+        console.log( self.data.length );
+
         self.chart.selectAll( "rect" )
             .data( self.data )
             .enter()
             .append( "rect" )
-            .attr( "x", 0 )
-            .attr( "y", d => self.yscale( d.population ) )
-            .attr( "width", d => self.xscale( d.region ) )
-            .attr( "height", self.yscale.bandwidth() );
+            .attr( "x", d => self.xscale( d.region ) )
+            .attr( "y", 0 )
+            .attr( "width", self.xscale.bandwidth() )
+            .attr( "height", d => self.yscale( d.population ) );
 
         self.xaxis_group
             .call( self.xaxis );
