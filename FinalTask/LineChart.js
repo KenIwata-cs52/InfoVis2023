@@ -1,5 +1,5 @@
 class LineChart {
-    constructor( config, data ){
+    constructor( config, data ) {
         this.config = {
             parent: config.parent,
             width: config.width || 256,
@@ -7,7 +7,8 @@ class LineChart {
             margin: config.margin || { top:10, right:10, bottom:10, left:10 },
             xlabel: config.xlabel || '',
             ylabel: config.ylabel || '',
-            cscale: config.cscale
+            cscale: config.cscale,
+            region: config.region || ""
         };
         this.data = data;
         this.init();
@@ -30,14 +31,14 @@ class LineChart {
             .range( [ 0, self.inner_width ] );
 
         self.yscale = d3.scaleLinear()
-            .range( [ 0, self.inner_height ] );
+            .range( [ self.inner_height, 0 ] );
 
         self.xaxis = d3.axisBottom( self.xscale )
-            .ticks( 12 )
+            .ticks( 5 )
             .tickSizeOuter( 0 );
 
         self.yaxis = d3.axisLeft( self.yscale )
-            .ticks( 10 )
+            .ticks( 5 )
             .tickSizeOuter( 0 );
 
         self.xaxis_group = self.chart.append( 'g' )
@@ -47,35 +48,38 @@ class LineChart {
             .attr( 'transform', `translate(0, 0)` );
 
         self.line = d3.line()
-            .x( d => self.xscale( d.month ) )
-            .y( d => self.yscale( d.temperature ) );
+            .x( d => self.xscale( d.year ) )
+            .y( d => self.yscale( d.population ) );
     }
 
     update() {
         let self = this;
 
-        self.xscale.domain( [ 1, d3.max( self.data, d => d.month ) ] );
-        self.yscale.domain( [ d3.max( self.data, d => d.temperature ), 0 ] );
+        self.xscale.domain( [ d3.min( self.data, d => d.year ), d3.max( self.data, d => d.year ) ] );
+        self.yscale.domain( [ 0, d3.max( self.data, d => d.population ) ] );
 
         self.render();
     }
 
     render() {
         let self = this;
+        let data = self.data.filter( d => d.region == self.config.region )
 
-        self.chart.selectAll( "circle" )
-            .data( self.data )
-            .enter()
-            .append( "circle" )
-            .attr( "cx", d => self.xscale( d.month ) )
-            .attr( "cy", d => self.yscale( d.temperature ) )
-            .attr( "r", 5 );
+        if( data.length > 0 ){
+            self.chart.selectAll( "circle" )
+                .data( data )
+                .enter()
+                .append( "circle" )
+                .attr( "cx", d => self.xscale( d.year ) )
+                .attr( "cy", d => self.yscale( d.population ) )
+                .attr( "r", 3 );
 
-        self.svg.append( 'path' )
-            .attr( 'transform', `translate(${self.config.margin.left}, ${self.config.margin.top})` )
-            .attr( 'd', self.line( self.data ) )
-            .attr( 'stroke', 'black' )
-            .attr( 'fill', 'none' );
+            self.svg.append( 'path' )
+                .attr( 'transform', `translate(${self.config.margin.left}, ${self.config.margin.top})` )
+                .attr( 'd', self.line( self.data ) )
+                .attr( 'stroke', 'black' )
+                .attr( 'fill', 'none' );
+        }
 
         self.xaxis_group
             .call( self.xaxis );
