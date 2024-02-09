@@ -52,6 +52,5 @@ d3.csv( "https://KenIwata-cs52.github.io/InfoVis2023/FinalTask/Data/population_d
 function drawLine( color, region ) {
     line_chart.config.color = color;
     line_chart.config.region = region;
-    // line_chart.reload();
-    line_chart.render();
+    line_chart.reload();
 }
