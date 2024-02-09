@@ -80,30 +80,6 @@ class LineChart {
         let data = self.data.filter( d => d.region == self.config.region )
 
         if( data.length > 0 ){
-            self.chart.selectAll( "circle" )
-                .data( data )
-                .enter()
-                .append( "circle" )
-                .attr( "cx", d => self.xscale( d.year ) )
-                .attr( "cy", d => self.yscale( d.population ) )
-                .attr( "r", 5 )
-                .attr( "fill", self.config.color )
-                .on( 'mouseover', (e,d) => {
-                    d3.select( '#tooltip' )
-                        .style( 'opacity', 1)
-                        .html( `<div class="tooltip-label">${d.year}</div>${d.population}` );
-                })
-                .on( 'mousemove', (e) => {
-                    const padding = 12;
-                    d3.select( '#tooltip' )
-                        .style( 'left', ( e.pageX + padding ) + 'px' )
-                        .style( 'top', ( e.pageY + padding ) + 'px' );
-                })
-                .on( 'mouseleave', () => {
-                    d3.select( '#tooltip' )
-                        .style( 'opacity', 0 );
-                });
-
             self.svg.append( 'path' )
                 .attr( 'transform', `translate(${self.config.margin.left}, ${self.config.margin.top})` )
                 .attr( 'd', self.line( data ) )
@@ -124,12 +100,5 @@ class LineChart {
 
         self.yaxis_group
             .call( self.yaxis );
-    }
-
-    reload() {
-        let self = this;
-        self.svg = null;
-        self.init();
-        self.update();
     }
 }
